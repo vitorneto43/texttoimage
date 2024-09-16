@@ -1,0 +1,33 @@
+import torch
+from diffusers import StableDiffusionPipeline
+
+# Carregue o modelo pré-treinado
+pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
+
+# Mova o pipeline para o dispositivo apropriado
+device = "cpu"
+pipe.to(device)
+
+
+# Função para gerar uma imagem a partir de um texto
+def generate_image_from_text(prompt, num_inference_steps=50):
+    # Gere a imagem
+    with torch.no_grad():
+        result = pipe(prompt, num_inference_steps=num_inference_steps)
+
+    # Verifique o conteúdo retornado
+    print(result)  # Adicione esta linha para examinar o conteúdo retornado
+
+    # Acesse a imagem com base na saída do modelo
+    if 'images' in result:
+        image = result['images'][0]
+    else:
+        raise ValueError("O formato da saída do modelo mudou. Verifique o conteúdo retornado.")
+
+    # Salve a imagem gerada
+    image.save("generated_image2.png")
+
+
+# Exemplo de uso
+text_prompt = ("henry ford")
+generate_image_from_text(text_prompt)
